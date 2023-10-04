@@ -1,27 +1,28 @@
 pipeline {
     agent {
-      label 'docker'
+        label 'docker'
     }
 
     environment {
-
-    DOCKERHUB_CREDENTIALS = credentials('dockeruser')
-     registry = "ksksrikanth/frontend-lms"
+        DOCKERHUB_CREDENTIALS = credentials('dockeruser')
+        registry = "ksksrikanth/frontend-lms"
         registryCredential = 'dockerhub'
     }
 
     stages {
-         stage('pipeline,build status') {
+        stage('Build status') {
             steps {
                 script {
-                    slackSend(
-                        channel: 'jenkins-notification',
-                        color: 'good',
-                        message: 'pipeline started',
-                        teamDomain: 'jenkins-company',
-                        tokenCredentialId: 'yVxUzFTHFoPAq2ARuKYXFCBk',
-                        username: 'jenkins-suresh'
-                    )
+                    currentBuild.resultIsBetterOrEqualTo('SUCCESS') ? \
+                        slackSend(
+                            color: 'good',
+                            message: "Pipeline started by ${BUILD_USER_DISPLAY_NAME}",
+                            teamDomain: 'jenkins-company',
+                            tokenCredentialId: 'yVxUzFTHFoPAq2ARuKYXFCBk',
+                            channel: 'jenkins-notification',
+                            username: 'jenkins-suresh'
+                        ) : \
+                        echo "Build status is not SUCCESS, not sending Slack notification."
                 }
             }
         }
@@ -31,26 +32,31 @@ pipeline {
                 sh 'cd webapp && docker build -t ksksrikanth/frontend-lms .'
             }
         }
+
         stage('Logging into dockerhub account') {
             steps {
                 sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
             }
         }
-        stage('pushing the docker image into dockerhub') {
+
+        stage('Pushing the docker image into dockerhub') {
             steps {
-                  sh 'docker push ksksrikanth/frontend-lms'
+                sh 'docker push ksksrikanth/frontend-lms'
             }
         }
+
         stage('Remove old docker images') {
-             steps {
-                 sh 'docker rmi -f ksksrikanth/frontend-lms'
+            steps {
+                sh 'docker rmi -f ksksrikanth/frontend-lms'
             }
         }
-         stage('Running the docker container') {
+
+        stage('Running the docker container') {
             steps {
-                  sh 'docker container rm --force fe'
-                  sh 'docker run -dt -p 80:80 --name fe ksksrikanth/frontend-lms'
+                sh 'docker container rm --force fe'
+                sh 'docker run -dt -p 80:80 --name fe ksksrikanth/frontend-lms'
             }
         }
     }
 }
+
