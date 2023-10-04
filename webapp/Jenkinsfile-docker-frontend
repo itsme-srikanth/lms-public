@@ -1,7 +1,7 @@
 pipeline {
     agent {
       label 'docker'
-    \
+    }
 
     environment {
 
@@ -11,7 +11,20 @@ pipeline {
     }
 
     stages {
-        
+
+            steps {
+                script {
+                    slackSend(
+                        channel: 'jenkins-notification',
+                        color: 'good',
+                        message: 'pipeline started',
+                        teamDomain: 'jenkins-company',
+                        tokenCredentialId: 'yVxUzFTHFoPAq2ARuKYXFCBk',
+                        username: 'jenkins-suresh'
+                    )
+                }
+            }
+        }
 
         stage('Building the docker image') {
             steps {
