@@ -21,8 +21,7 @@ pipeline {
                             tokenCredentialId: 'yVxUzFTHFoPAq2ARuKYXFCBk',
                             channel: 'jenkins-notification',
                             username: 'jenkins-suresh'
-                        ) : \
-                        echo "Build status is not SUCCESS, not sending Slack notification."
+                        ) : 
                 }
             }
         }
