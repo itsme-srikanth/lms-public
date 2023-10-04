@@ -11,7 +11,7 @@ pipeline {
     }
 
     stages {
-
+         stage('pipeline,build status') {
             steps {
                 script {
                     slackSend(
