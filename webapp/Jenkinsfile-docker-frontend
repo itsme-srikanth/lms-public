@@ -10,22 +10,16 @@ pipeline {
     }
 
     stages {
-        stage('Build status') {
+stage('pipeline status') {
             steps {
                 script {
-                    currentBuild.resultIsBetterOrEqualTo('SUCCESS') ? \
-                        slackSend(
-                            color: 'good',
-                            message: "Pipeline started by ${BUILD_USER_DISPLAY_NAME}",
-                            teamDomain: 'jenkins-company',
-                            tokenCredentialId: 'yVxUzFTHFoPAq2ARuKYXFCBk',
-                            channel: 'jenkins-notification',
-                            username: 'jenkins-suresh'
-                        ) : 
+                    slackSend channel: 'jenkins-notification',
+                            color: '#1E1EC9',
+                            message: 'lms-frontend Pipeline has been Started',
+                            tokenCredentialId: 'yVxUzFTHFoPAq2ARuKYXFCBk'
                 }
             }
         }
-
         stage('Building the docker image') {
             steps {
                 sh 'cd webapp && docker build -t ksksrikanth/frontend-lms .'
