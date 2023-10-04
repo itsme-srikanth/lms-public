@@ -13,7 +13,7 @@ pipeline {
 stage('Build Approval') {
       steps {
         input(
-          id: 'userInput',
+          id: 'yVxUzFTHFoPAq2ARuKYXFCBk',
           message: 'Do you want to proceed with the build?',
           ok: 'Proceed'
         )
