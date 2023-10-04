@@ -51,5 +51,10 @@ stage('pipeline status') {
             }
         }
     }
+post {
+    success {
+        script {mail bcc: '', body: '', cc: '', from: '', replyTo: '', subject: 'build success,failure,always', to: 'srikanthkurra111@gmail.com'
 }
-
+}
+}
+}
